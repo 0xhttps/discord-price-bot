@@ -12,7 +12,7 @@
   "dependencies": {
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
-    "ethers": "^5.6.9",
-    "web3": "^1.7.4"
+    "ethers": "^5.6.9", 
+    "typescript": "^5.3.2"
   }
 }
