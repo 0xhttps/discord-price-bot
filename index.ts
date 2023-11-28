@@ -27,8 +27,10 @@ client.on('ready', () => {
       const bot = guild.members.cache.get(`${botId}`);
 
       if (bot) {
-        bot.setNickname(`$${price}`);
-        console.log(`Updated nickname to $ ${price}`);
+        bot.setNickname(`$${price.price}`);
+        client.user?.setActivity(`${price.change}`)
+        console.log(`Updated nickname to $ ${price.price}`);
+        console.log(`Updated activity to ${price.change}`);
       } else {
         console.error('Bot not found in guild');
       }
@@ -42,8 +44,10 @@ async function getPrice() {
   try {
     const response = await fetch(baseUrl + addr);
     const data = await response.json();
-    const price = data.pair.priceUsd;
-    return price;
+    let info: any = {};
+    info["price"] = data.pair.priceUsd;
+    info["change"] = `24hr: ${data.pair.priceChange["h24"]}%`;
+    return info;
   } catch (error) {
     console.error('Error fetching price:', error);
     return 'Error fetching price';
