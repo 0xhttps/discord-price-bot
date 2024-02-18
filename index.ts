@@ -20,22 +20,25 @@ client.on('ready', () => {
 
   // Set interval to update nickname every 20 seconds
   setInterval(async () => {
-    const price = await getPrice();
-    const guild = client.guilds.cache.get(`${guildId}`);
+    try {
+      const price = await getPrice();
+      const guild = client.guilds.cache.get(`${guildId}`);
+      if (guild) {
+        const bot = guild.members.cache.get(`${botId}`);
 
-    if (guild) {
-      const bot = guild.members.cache.get(`${botId}`);
-
-      if (bot) {
-        bot.setNickname(`$${price.price}`);
-        client.user?.setActivity(`${price.change}`)
-        console.log(`Updated nickname to $ ${price.price}`);
-        console.log(`Updated activity to ${price.change}`);
+        if (bot) {
+          bot.setNickname(`$${price.price}`);
+          client.user?.setActivity(`${price.change}`)
+          console.log(`Updated nickname to $ ${price.price}`);
+          console.log(`Updated activity to ${price.change}`);
+        } else {
+          console.error('Bot not found in guild');
+        }
       } else {
-        console.error('Bot not found in guild');
+        console.error('Guild not found');
       }
-    } else {
-      console.error('Guild not found');
+    } catch(e) {
+      console.error(e)
     }
   }, 20000); // 20 seconds in milliseconds
 });
@@ -46,10 +49,10 @@ async function getPrice() {
     const data = await response.json();
     let info: any = {};
     info["price"] = data.pair.priceUsd;
-    info["change"] = `24hr: ${data.pair.priceChange["h24"]}%`;
+    info["change"] = `24h: ${data.pair.priceChange["h24"]}%`;
     return info;
-  } catch (error) {
-    console.error('Error fetching price:', error);
+  } catch (e) {
+    console.error('Error fetching price:', e);
     return 'Error fetching price';
   }
 }
